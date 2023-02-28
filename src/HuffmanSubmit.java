@@ -5,9 +5,11 @@ import java.util.*;
 
 public class HuffmanSubmit implements Huffman {
     Queue<HuffmanNode> queue;
+    Map<Integer, String> huffCodeMap; //Stores unicode char as key and huffman encoding as string value.
 
-    HuffmanSubmit(){
+    HuffmanSubmit() {
         queue = new PriorityQueue<>();
+        huffCodeMap = new HashMap<>();
     }
 
     //Scan frequency of character in a file. Store as key value pair in hashmap.
@@ -52,7 +54,7 @@ public class HuffmanSubmit implements Huffman {
     }
 
     //Enqueue element from a map into the instance variable queue of this huffmansubmit class
-    private void enQueue(Map<Integer, Integer> frequency){
+    private void enQueue(Map<Integer, Integer> frequency) {
         for (Integer key : frequency.keySet()) {
             queue.offer(new HuffmanNode(key, frequency.get(key)));
         }
@@ -78,13 +80,13 @@ public class HuffmanSubmit implements Huffman {
 
     //Build huffman tree with the priority queue instance variable.
     //Return a HuffmanNode to the root of the tree.
-    private HuffmanNode huffmanTree(){
+    private HuffmanNode huffmanTree() {
         HuffmanNode root = null;
-        while(queue.size()!=1){
+        while (queue.size() != 1) {
             HuffmanNode minNode = queue.poll();
             HuffmanNode secondMinNode = queue.poll();
             //Dummy node only hold total frequency from the two child nodes
-            HuffmanNode totalFrequency = new HuffmanNode(-1, minNode.freq+ secondMinNode.freq);
+            HuffmanNode totalFrequency = new HuffmanNode(-1, minNode.freq + secondMinNode.freq);
             totalFrequency.left = minNode;
             totalFrequency.right = secondMinNode;
             root = totalFrequency;
@@ -93,24 +95,38 @@ public class HuffmanSubmit implements Huffman {
         return root;
     }
 
-    void printCode(HuffmanNode node, String s){
-        if(node == null){
+    void huffmanCodeToMap(HuffmanNode node, String s) {
+        if (node == null) {
             return;
         }
-        if(node.left == null && node.right == null){
-            System.out.println(node.c +" " + s);
+        if (node.left == null && node.right == null) {
+            huffCodeMap.put(node.c, s);
         }
 
-        printCode(node.left, s+"0");
-        printCode(node.right , s+"1");
+        huffmanCodeToMap(node.left, s + "0");
+        huffmanCodeToMap(node.right, s + "1");
     }
 
     public void encode(String inputFile, String outputFile, String freqFile) {
         String outpath = outputPath();
         BinaryOut encodeStream = new BinaryOut(outpath + "/" + outputFile);
         System.out.println("Output now writing");
-        enQueue(scanFrequency(inputFile));
+        enQueue(scanFrequency(inputFile)); //Scan frequency and add the file into pqueue
+        HuffmanNode root = huffmanTree(); //build huffmantree with queue. Return root.
+        huffmanCodeToMap(root, "");
+        File file = new File(inputFile);
 
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            int s = reader.read();
+            while (s != -1) {
+                encodeStream.write(huffCodeMap.get(s));//Get the corresponding huffman code with respect to character s
+                encodeStream.flush();
+                s = reader.read();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         encodeStream.flush();
 
     }
@@ -136,11 +152,14 @@ public class HuffmanSubmit implements Huffman {
 
     public static void main(String[] args) {
         HuffmanSubmit huffman = new HuffmanSubmit();
+        huffman.encode("test.txt", "output2.txt","" );
         //huffman.encode("", "test.txt", "");
         //huffman.writeToFrequency("./src/alice30.txt", "frequency.txt");
-        huffman.queue = new PriorityQueue<>();
-        huffman.enQueue(scanFrequency("test.txt"));
-        huffman.printCode(huffman.huffmanTree(),"" );
+        // huffman.huffmanCode(huffman.huffmanTree(),"" );
+
+        for(Integer key: huffman.huffCodeMap.keySet()){
+            System.out.println(key + " " + huffman.huffCodeMap.get(key));
+        }
 
 
         //huffman.encode("ur.jpg", "ur.enc", "freq.txt");
