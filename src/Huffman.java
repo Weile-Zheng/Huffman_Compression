@@ -5,7 +5,7 @@
 
 public interface Huffman {
 
-/**
+   /**
  *     Encodes the input file using Huffman Coding. Produces two files 
  *     
  *     @param inputFile The name of the input file to be encoded.
