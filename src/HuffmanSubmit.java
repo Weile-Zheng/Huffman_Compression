@@ -6,49 +6,75 @@ import java.util.*;
 public class HuffmanSubmit implements Huffman {
     Queue<HuffmanNode> queue;
 
-    private void scanFrequency(String inputFile){
-        Map<Character, Integer> frequency = new HashMap<>();
+    HuffmanSubmit(){
+        queue = new PriorityQueue<>();
+    }
+
+    private static Map scanFrequency(String inputFile) {
+        Map<Integer, Integer> frequency = new HashMap<>();
         File file = new File(inputFile);
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             int s = reader.read();
-            while(s != -1){
-                char c = (char) s;
-                if(frequency.containsKey(c))
-                    frequency.put(c,frequency.get(c)+1);
-                else{
-                    frequency.put(c,1);
+            while (s != -1) {
+                if (frequency.containsKey(s))
+                    frequency.put(s, frequency.get(s) + 1);
+                else {
+                    frequency.put(s, 1);
                 }
+                s = reader.read();
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        for (Character key: frequency.keySet()) {
-            System.out.println(key + " " + frequency.get(key));
+
+
+        return frequency;
+    }
+
+
+
+    private void writeToFrequency(String inputFileName, String freqFileName) {
+        Map<Integer, Integer> frequency = scanFrequency(inputFileName);
+        String outpath = outputPath();
+        try {
+            System.out.println("Generating Frequency File");
+            FileWriter writer = new FileWriter(outpath + "/" + freqFileName);
+            for (Integer key : frequency.keySet()) {
+                writer.write(Integer.toBinaryString(key) + ":" + frequency.get(key) + "\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
     }
-    private class HuffmanNode implements Comparable<HuffmanNode>{
-        char character;
+
+    private void enQueue(Map<Integer, Integer> frequency){
+        for (Integer key : frequency.keySet()) {
+            queue.offer(new HuffmanNode(key, frequency.get(key)));
+        }
+    }
+
+    private class HuffmanNode implements Comparable<HuffmanNode> {
+        int c; //unicode representation of the character
         int freq;
-        HuffmanNode(char c){
-            character=c;
-            freq ++;
+        HuffmanNode left;
+        HuffmanNode right;
+
+        HuffmanNode(Integer c, int freq) {
+            this.c = c;
+            this.freq = freq;
         }
 
-        void addFreq(){
-            freq++;
-        }
         @Override
         public int compareTo(HuffmanNode o) {
-            return freq-o.freq;
+            return freq - o.freq;
         }
     }
 
 
-    //private buildFreqFile(){
-
-    //}
     private String outputPath() { //We are not dealing with the exception in this method
         try {
             Process currDir = Runtime.getRuntime().exec("pwd");
@@ -64,7 +90,7 @@ public class HuffmanSubmit implements Huffman {
 
     public void encode(String inputFile, String outputFile, String freqFile) {
         String outpath = outputPath();
-        BinaryOut encodeStream = new BinaryOut(outpath+"/"+outputFile);
+        BinaryOut encodeStream = new BinaryOut(outpath + "/" + outputFile);
         System.out.println("Output now writing");
         //encodeStream.write();
         //encodeStream.write(11010110);
@@ -79,8 +105,8 @@ public class HuffmanSubmit implements Huffman {
 
     }
 
-    public void test(){
-        HuffmanNode c= new HuffmanNode('c');
+    public void test() {
+        /*HuffmanNode c= new HuffmanNode('c');
         HuffmanNode a= new HuffmanNode('a');
         HuffmanNode b= new HuffmanNode('b');
         c.addFreq();
@@ -90,19 +116,20 @@ public class HuffmanSubmit implements Huffman {
         queue.offer(c);
         queue.offer(a);
         queue.offer(b);
+        a.addFreq();
+        a.addFreq(); //Modifying comparing values for an element already in queue is ok.
+        //Even after adding in, they will be sorted automatically when polled
         while(queue.isEmpty()==false){
-            System.out.println(queue.poll().character);
-        }
-
+            System.out.println(queue.poll().character);}*/
 
     }
-
 
     public static void main(String[] args) {
         HuffmanSubmit huffman = new HuffmanSubmit();
         //huffman.encode("", "test.txt", "");
-        huffman.scanFrequency("test.txt");
-
+        //huffman.writeToFrequency("./src/alice30.txt", "frequency.txt");
+        huffman.queue = new PriorityQueue<>();
+        huffman.enQueue(scanFrequency("./src/alice30.txt"));
 
 
         //huffman.encode("ur.jpg", "ur.enc", "freq.txt");
