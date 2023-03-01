@@ -1,12 +1,10 @@
-// Import any package as required
-
 import java.io.*;
 import java.util.*;
 
 public class HuffmanSubmit implements Huffman {
     Queue<HuffmanNode> queue;
     Map<Integer, String> huffCodeMap; //Stores unicode char as key and huffman encoding as string value.
-    Map<Integer, Integer> frequency;
+    Map<Integer, Integer> frequency; //Stores Unicode char as key and frequency as value.
 
     HuffmanSubmit() {
         queue = new PriorityQueue<>();
@@ -111,17 +109,14 @@ public class HuffmanSubmit implements Huffman {
     }
 
     private void huffmanCodeToMap(HuffmanNode node, String s) {
-        if (node == null) {
+        if (node == null)
             return;
-        }
-        if (node.left == null && node.right == null) {
+
+        if (node.left == null && node.right == null)
             huffCodeMap.put(node.c, s);
-        }
 
         huffmanCodeToMap(node.left, s + "0");
         huffmanCodeToMap(node.right, s + "1");
-
-
     }
 
 
@@ -140,8 +135,15 @@ public class HuffmanSubmit implements Huffman {
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             int s = reader.read();
             while (s != -1) {
-                encodeStream.write(huffCodeMap.get(s));//Get the corresponding huffman code with respect to character s
-                encodeStream.flush();
+                String [] arr = huffCodeMap.get(s).split("");
+                for(String i:arr){
+                    if(i.equals("1")){
+                        encodeStream.write(true);
+                    }
+                    else{
+                        encodeStream.write(false);
+                    }
+                }
                 s = reader.read();
             }
         } catch (IOException e) {
@@ -162,23 +164,23 @@ public class HuffmanSubmit implements Huffman {
         try {
             FileWriter writer = new FileWriter(outpath + "/" + outputFile);
             HuffmanNode current = root;
-            //System.out.println(current.left.left.c);
             while (!stream.isEmpty()) {
-                int x = Character.getNumericValue(stream.readChar());
-                System.out.println(x);
+                int x = 0;
+                boolean b = stream.readBoolean();
+                if(b){
+                    x =1;
+                }
                 if (x == 0) {
                     current = current.left;
                     if (current.left == null && current.right ==null){
-                        System.out.println(current.c);
                         writer.write((char)current.c);
                         current = root;
                     }
                 } else {
                     current =current.right;
                     if (current.left == null && current.right == null) {
-                        System.out.println(current.c);
                         writer.write((char)current.c);
-                        current =root;
+                        current=root;
                     }
                 }
             }
@@ -191,9 +193,7 @@ public class HuffmanSubmit implements Huffman {
         queue.clear();
         }
 
-
-
-    private String outputPath() { //We are not dealing with the exception in this method
+    private String outputPath() {
         try {
             Process currDir = Runtime.getRuntime().exec("pwd");
             BufferedReader reader = new BufferedReader(new InputStreamReader(currDir.getInputStream()));
@@ -208,29 +208,8 @@ public class HuffmanSubmit implements Huffman {
 
     public static void main(String[] args) {
         HuffmanSubmit huffman = new HuffmanSubmit();
-        huffman.encode("test.txt", "output.enc","frequency.txt" );
+        huffman.encode("src/alice30.txt", "output.enc","frequency.txt" );
         huffman.decode("output.enc", "decode.txt", "frequency.txt");
-        //huffman.writeToFrequency("./src/alice30.txt", "frequency.txt");
-        // huffman.huffmanCode(huffman.huffmanTree(),"" );
-        //huffman.parseFrequencyFile("frequency.txt");
-
-        System.out.println();
-
-        for (Integer key : huffman.frequency.keySet()) {
-            System.out.println(key + " " + huffman.frequency.get(key));
-        }
-
-        for (Integer key : huffman.huffCodeMap.keySet()) {
-            System.out.println(key + " " + huffman.huffCodeMap.get(key));
-        }
-
-
-        //huffman.encode("ur.jpg", "ur.enc", "freq.txt");
-        //huffman.decode("ur.enc", "ur_dec.jpg", "freq.txt");
-        // After decoding, both ur.jpg and ur_dec.jpg should be the same.
-        // On linux and mac, you can use `diff' command to check if they are the same.
-
-
     }
 
 }
