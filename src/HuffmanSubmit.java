@@ -58,7 +58,8 @@ public class HuffmanSubmit implements Huffman {
             String line = reader.readLine();
             while (line != null) {
                 String[] arr = line.split(":");
-                frequency.put(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]));
+                int decimal = Integer.parseInt(arr[0], 2); //convert binary to unicode decimal.
+                frequency.put(decimal, Integer.parseInt(arr[1]));
                 line = reader.readLine();
             }
         } catch (IOException e) {
@@ -119,7 +120,10 @@ public class HuffmanSubmit implements Huffman {
 
         huffmanCodeToMap(node.left, s + "0");
         huffmanCodeToMap(node.right, s + "1");
+
+
     }
+
 
     public void encode(String inputFile, String outputFile, String freqFile) {
         String outpath = outputPath();
@@ -144,7 +148,7 @@ public class HuffmanSubmit implements Huffman {
             e.printStackTrace();
         }
         encodeStream.flush();
-
+        queue.clear(); //Since we never poll() all element from queue, we must clear it after use
     }
 
 
@@ -153,47 +157,41 @@ public class HuffmanSubmit implements Huffman {
         parseFrequencyFile(freqFile); //Parse frequency file into frequency hashmap
         enQueue(); //Put elements of frequency hashmap into pqueue
         HuffmanNode root = huffmanTree(); //build huffmantree with queue. Return root.
-        HuffmanNode current = root;
-       // try {
-            BinaryIn stream = new BinaryIn(inputFile);
-            while(!stream.isEmpty()){
-                boolean s= stream.readBoolean();
-                System.out.println(s);
-            }
+        BinaryIn stream = new BinaryIn(inputFile);
 
-
-       // }catch (IOException e){
-
-       // }
-
-       /* try {
+        try {
             FileWriter writer = new FileWriter(outpath + "/" + outputFile);
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            int s = reader.read();
-            while (s!=-1) {
-                System.out.println(s);
-                if(s == 0){
-                    if(current.left == null)
-                        writer.write(current.c);
-                    else
-                        current = current.left;
-                }
-                else{
-                    if(current.right ==null){
-                        writer.write(current.c);
+            HuffmanNode current = root;
+            //System.out.println(current.left.left.c);
+            while (!stream.isEmpty()) {
+                int x = Character.getNumericValue(stream.readChar());
+                System.out.println(x);
+                if (x == 0) {
+                    current = current.left;
+                    if (current.left == null && current.right ==null){
+                        System.out.println(current.c);
+                        writer.write((char)current.c);
+                        current = root;
                     }
-                    else
-                        current = current.right;
+                } else {
+                    current =current.right;
+                    if (current.left == null && current.right == null) {
+                        System.out.println(current.c);
+                        writer.write((char)current.c);
+                        current =root;
+                    }
                 }
             }
-            //writer.close();
-
+           writer.close();
 
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
-    }
+        queue.clear();
+        }
+
+
 
     private String outputPath() { //We are not dealing with the exception in this method
         try {
@@ -210,20 +208,21 @@ public class HuffmanSubmit implements Huffman {
 
     public static void main(String[] args) {
         HuffmanSubmit huffman = new HuffmanSubmit();
-       // huffman.encode("test.txt", "output.enc","frequency.txt" );
+        huffman.encode("test.txt", "output.enc","frequency.txt" );
         huffman.decode("output.enc", "decode.txt", "frequency.txt");
         //huffman.writeToFrequency("./src/alice30.txt", "frequency.txt");
         // huffman.huffmanCode(huffman.huffmanTree(),"" );
         //huffman.parseFrequencyFile("frequency.txt");
-       /* for (Integer key : huffman.huffCodeMap.keySet()) {
-            System.out.println(key + " " + huffman.huffCodeMap.get(key));
-        }
 
         System.out.println();
 
         for (Integer key : huffman.frequency.keySet()) {
             System.out.println(key + " " + huffman.frequency.get(key));
-        }*/
+        }
+
+        for (Integer key : huffman.huffCodeMap.keySet()) {
+            System.out.println(key + " " + huffman.huffCodeMap.get(key));
+        }
 
 
         //huffman.encode("ur.jpg", "ur.enc", "freq.txt");

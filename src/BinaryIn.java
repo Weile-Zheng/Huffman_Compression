@@ -168,8 +168,7 @@ public final class BinaryIn {
     }
 
    /**
-     * Reads the next bit of data from this binary input stream and return as a boolean.
-     *
+f     *
      * @return the next bit of data from this binary input stream as a {@code boolean}
      * @throws NoSuchElementException if this binary input stream is empty
      */
