@@ -6,15 +6,16 @@ import java.util.*;
 public class HuffmanSubmit implements Huffman {
     Queue<HuffmanNode> queue;
     Map<Integer, String> huffCodeMap; //Stores unicode char as key and huffman encoding as string value.
+    Map<Integer, Integer> frequency;
 
     HuffmanSubmit() {
         queue = new PriorityQueue<>();
         huffCodeMap = new HashMap<>();
+        frequency = new HashMap<>();
     }
 
     //Scan frequency of character in a file. Store as key value pair in hashmap.
-    private static Map scanFrequency(String inputFile) {
-        Map<Integer, Integer> frequency = new HashMap<>();
+    private void scanFrequency(String inputFile) {
         File file = new File(inputFile);
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -31,13 +32,10 @@ public class HuffmanSubmit implements Huffman {
             e.printStackTrace();
         }
 
-
-        return frequency;
     }
 
-    //Given an inputfile name and outputfile name(freqfile), scanFrequency() inputfile and write to output
-    private void writeToFrequency(String inputFileName, String freqFileName) {
-        Map<Integer, Integer> frequency = scanFrequency(inputFileName);
+    //Given an inputfile name and outputfile name(freqfile), write frequency to output
+    private void writeToFrequency(String freqFileName) {
         String outpath = outputPath();
         try {
             System.out.println("Generating Frequency File");
@@ -50,11 +48,27 @@ public class HuffmanSubmit implements Huffman {
             e.printStackTrace();
         }
 
+    }
+
+    //Read the frequency file and put characters and frequencies into frequency map
+    private void parseFrequencyFile(String frequencyFile) {
+        File file = new File(frequencyFile);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line = reader.readLine();
+            while (line != null) {
+                String[] arr = line.split(":");
+                frequency.put(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]));
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     //Enqueue element from a map into the instance variable queue of this huffmansubmit class
-    private void enQueue(Map<Integer, Integer> frequency) {
+    private void enQueue() {
         for (Integer key : frequency.keySet()) {
             queue.offer(new HuffmanNode(key, frequency.get(key)));
         }
@@ -95,7 +109,7 @@ public class HuffmanSubmit implements Huffman {
         return root;
     }
 
-    void huffmanCodeToMap(HuffmanNode node, String s) {
+    private void huffmanCodeToMap(HuffmanNode node, String s) {
         if (node == null) {
             return;
         }
@@ -111,7 +125,9 @@ public class HuffmanSubmit implements Huffman {
         String outpath = outputPath();
         BinaryOut encodeStream = new BinaryOut(outpath + "/" + outputFile);
         System.out.println("Output now writing");
-        enQueue(scanFrequency(inputFile)); //Scan frequency and add the file into pqueue
+        scanFrequency(inputFile);
+        enQueue(); //enqueue element of frequency hashmap to pqueue
+        writeToFrequency(freqFile);
         HuffmanNode root = huffmanTree(); //build huffmantree with queue. Return root.
         huffmanCodeToMap(root, "");
         File file = new File(inputFile);
@@ -134,6 +150,48 @@ public class HuffmanSubmit implements Huffman {
 
     public void decode(String inputFile, String outputFile, String freqFile) {
         String outpath = outputPath();
+        parseFrequencyFile(freqFile); //Parse frequency file into frequency hashmap
+        enQueue(); //Put elements of frequency hashmap into pqueue
+        HuffmanNode root = huffmanTree(); //build huffmantree with queue. Return root.
+        HuffmanNode current = root;
+       // try {
+            BinaryIn stream = new BinaryIn(inputFile);
+            while(!stream.isEmpty()){
+                boolean s= stream.readBoolean();
+                System.out.println(s);
+            }
+
+
+       // }catch (IOException e){
+
+       // }
+
+       /* try {
+            FileWriter writer = new FileWriter(outpath + "/" + outputFile);
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            int s = reader.read();
+            while (s!=-1) {
+                System.out.println(s);
+                if(s == 0){
+                    if(current.left == null)
+                        writer.write(current.c);
+                    else
+                        current = current.left;
+                }
+                else{
+                    if(current.right ==null){
+                        writer.write(current.c);
+                    }
+                    else
+                        current = current.right;
+                }
+            }
+            //writer.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
 
     }
 
@@ -152,14 +210,20 @@ public class HuffmanSubmit implements Huffman {
 
     public static void main(String[] args) {
         HuffmanSubmit huffman = new HuffmanSubmit();
-        huffman.encode("test.txt", "output2.txt","" );
-        //huffman.encode("", "test.txt", "");
+       // huffman.encode("test.txt", "output.enc","frequency.txt" );
+        huffman.decode("output.enc", "decode.txt", "frequency.txt");
         //huffman.writeToFrequency("./src/alice30.txt", "frequency.txt");
         // huffman.huffmanCode(huffman.huffmanTree(),"" );
-
-        for(Integer key: huffman.huffCodeMap.keySet()){
+        //huffman.parseFrequencyFile("frequency.txt");
+       /* for (Integer key : huffman.huffCodeMap.keySet()) {
             System.out.println(key + " " + huffman.huffCodeMap.get(key));
         }
+
+        System.out.println();
+
+        for (Integer key : huffman.frequency.keySet()) {
+            System.out.println(key + " " + huffman.frequency.get(key));
+        }*/
 
 
         //huffman.encode("ur.jpg", "ur.enc", "freq.txt");
