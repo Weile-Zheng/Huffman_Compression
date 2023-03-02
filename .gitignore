@@ -1,0 +1,11 @@
+Huffman_Coding.iml
+.idea/
+decode.txt
+encode.enc
+frequency.txt
+out.enc
+out/
+output.enc
+src/read.java
+test.txt
+testignore.txt
