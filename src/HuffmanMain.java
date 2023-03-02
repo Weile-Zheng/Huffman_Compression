@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 public class HuffmanMain implements Huffman {
@@ -69,7 +70,6 @@ public class HuffmanMain implements Huffman {
         }
     }
 
-    //Nested HuffmanNode Class
     private class HuffmanNode implements Comparable<HuffmanNode> {
         int c;
         int freq;
@@ -127,8 +127,8 @@ public class HuffmanMain implements Huffman {
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             int s = reader.read();
             while (s != -1) {
-                String [] arr = huffCodeMap.get(s).split("");
-                for(String i:arr){
+                String[] arr = huffCodeMap.get(s).split("");
+                for (String i : arr) {
                     encodeStream.write(i.equals("1"));
                 }
                 s = reader.read();
@@ -156,21 +156,22 @@ public class HuffmanMain implements Huffman {
                 if (!b) {
                     current = current.left;
                 } else {
-                    current =current.right;
+                    current = current.right;
                 }
-                if (current.left == null && current.right ==null){
-                    writer.write((char)current.c);
+                if (current.left == null && current.right == null) {
+                    writer.write((char) current.c);
                     current = root;
                 }
             }
-           writer.close();
+            writer.write("\n");
+            writer.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         queue.clear();
-        }
+    }
 
     private String outputPath() {
         try {
@@ -184,9 +185,17 @@ public class HuffmanMain implements Huffman {
     }
 
     public static void main(String[] args) {
+        //args[0] method of encode or decode
+        //args[1] encode input file name/ decode input file name
+        //args[2] encode output file name/ decode output file name
         HuffmanMain huffman = new HuffmanMain();
-        huffman.encode("src/alice30.txt", "encode.enc","frequency.txt" );
-        huffman.decode("encode.enc", "decode.txt", "frequency.txt");
+        URL url = HuffmanMain.class.getResource(args[1]);
+        if(args[0].equals("encode")){
+            huffman.encode(url.getFile(), args[2], ".frequency.txt");
+        }
+        else{
+            huffman.decode(url.getFile(), args[2], ".frequency.txt");
+        }
     }
 
 }
