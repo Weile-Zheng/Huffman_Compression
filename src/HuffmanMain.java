@@ -36,7 +36,7 @@ public class HuffmanMain implements Huffman {
         String outpath = outputPath();
         try {
             System.out.println("Generating Frequency File");
-            FileWriter writer = new FileWriter(outpath + "/" + freqFileName);
+            FileWriter writer = new FileWriter(outpath + "/"+freqFileName); //Hidden freqFile
             for (Integer key : frequency.keySet()) {
                 writer.write(Integer.toBinaryString(key) + ":" + frequency.get(key) + "\n");
             }
@@ -185,17 +185,54 @@ public class HuffmanMain implements Huffman {
     }
 
     public static void main(String[] args) {
-        //args[0] method of encode or decode
-        //args[1] encode input file name/ decode input file name
-        //args[2] encode output file name/ decode output file name
+        /*
+        args[0] method of encode or decode
+        args[1] encode input file name/ decode input file name
+        args[2] encode output file name/ decode output file name
+        */
+
         HuffmanMain huffman = new HuffmanMain();
-        URL url = HuffmanMain.class.getResource(args[1]);
+        URL url = HuffmanMain.class.getResource(args[1]); //Full Absolute Path for input file
+
+        /*Manipulating output file name
+        If args.length is 2, only two parameters are provided, therefore no output file name
+        is specified, we parse the args[1], the default input file
+
+        If args.length is 3, a specific output file name is requested, we parse args[2]
+        */
+        String parsedFile = args[1];
+
         if(args[0].equals("encode")){
-            huffman.encode(url.getFile(), args[2], ".frequency.txt");
+
+
+            if(args.length == 2 && args[1].contains(".")){ //If already have file definition
+                parsedFile = args[1].substring(0, args[1].lastIndexOf('.'));
+            }
+
+            else if(args.length ==3){ //If length = 3 we will parse the second argument
+                parsedFile = args[2];
+                if (parsedFile.contains(".")){
+                    parsedFile = parsedFile.substring(0, parsedFile.lastIndexOf('.'));
+                }
+            }
+            String frequencyFileName = "."+ parsedFile + "_freq.txt"; //Add frequency to the parsed file to keep track of names
+            String encodeFileName = parsedFile + ".enc"; //Add enc to all files
+            huffman.encode(url.getFile(), encodeFileName, frequencyFileName);
         }
-        else{
-            huffman.decode(url.getFile(), args[2], ".frequency.txt");
+
+        else{ //decode
+            parsedFile = args[1].substring(0, args[1].lastIndexOf('.'));
+            String frequencyFileName = "."+parsedFile + "_freq.txt";
+            URL frequrl = HuffmanMain.class.getResource(frequencyFileName);
+
+            if(args.length ==3){
+                huffman.decode(url.getFile(), args[2], frequrl.getFile());
+            }
+            else{
+                huffman.decode(url.getFile(),parsedFile,frequrl.getFile());
+            }
         }
+
     }
 
 }
