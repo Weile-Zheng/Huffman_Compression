@@ -2,9 +2,9 @@ import java.io.*;
 import java.util.*;
 
 public class HuffmanSubmit implements Huffman {
-    Queue<HuffmanNode> queue;
-    Map<Integer, String> huffCodeMap; //Stores unicode char as key and huffman encoding as string value.
-    Map<Integer, Integer> frequency; //Stores Unicode char as key and frequency as value.
+    private Queue<HuffmanNode> queue;
+    private Map<Integer, String> huffCodeMap; //Stores unicode char as key and huffman encoding as string value.
+    private Map<Integer, Integer> frequency; //Stores Unicode char as key and frequency as value.
 
     HuffmanSubmit() {
         queue = new PriorityQueue<>();
@@ -129,7 +129,6 @@ public class HuffmanSubmit implements Huffman {
         writeToFrequency(freqFile);
         HuffmanNode root = huffmanTree(); //build huffmantree with queue. Return root.
         huffmanCodeToMap(root, "");
-        File file = new File(inputFile);
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
@@ -137,12 +136,7 @@ public class HuffmanSubmit implements Huffman {
             while (s != -1) {
                 String [] arr = huffCodeMap.get(s).split("");
                 for(String i:arr){
-                    if(i.equals("1")){
-                        encodeStream.write(true);
-                    }
-                    else{
-                        encodeStream.write(false);
-                    }
+                    encodeStream.write(i.equals("1"));
                 }
                 s = reader.read();
             }
@@ -155,33 +149,25 @@ public class HuffmanSubmit implements Huffman {
 
 
     public void decode(String inputFile, String outputFile, String freqFile) {
-        String outpath = outputPath();
+        String outputpath = outputPath();
         parseFrequencyFile(freqFile); //Parse frequency file into frequency hashmap
         enQueue(); //Put elements of frequency hashmap into pqueue
         HuffmanNode root = huffmanTree(); //build huffmantree with queue. Return root.
         BinaryIn stream = new BinaryIn(inputFile);
 
         try {
-            FileWriter writer = new FileWriter(outpath + "/" + outputFile);
+            FileWriter writer = new FileWriter(outputpath + "/" + outputFile);
             HuffmanNode current = root;
             while (!stream.isEmpty()) {
-                int x = 0;
                 boolean b = stream.readBoolean();
-                if(b){
-                    x =1;
-                }
-                if (x == 0) {
+                if (!b) {
                     current = current.left;
-                    if (current.left == null && current.right ==null){
-                        writer.write((char)current.c);
-                        current = root;
-                    }
                 } else {
                     current =current.right;
-                    if (current.left == null && current.right == null) {
-                        writer.write((char)current.c);
-                        current=root;
-                    }
+                }
+                if (current.left == null && current.right ==null){
+                    writer.write((char)current.c);
+                    current = root;
                 }
             }
            writer.close();
@@ -197,19 +183,17 @@ public class HuffmanSubmit implements Huffman {
         try {
             Process currDir = Runtime.getRuntime().exec("pwd");
             BufferedReader reader = new BufferedReader(new InputStreamReader(currDir.getInputStream()));
-            String line = reader.readLine();
-            return line;
+            return reader.readLine();
         } catch (IOException e) {
             System.out.println("Failed to find path to current directory. Output file directed to home");
         }
-        String home = System.getProperty("user.home");
-        return home;
+        return System.getProperty("user.home");
     }
 
     public static void main(String[] args) {
         HuffmanSubmit huffman = new HuffmanSubmit();
-        huffman.encode("src/alice30.txt", "output.enc","frequency.txt" );
-        huffman.decode("output.enc", "decode.txt", "frequency.txt");
+        huffman.encode("src/alice30.txt", "encode.enc","frequency.txt" );
+        huffman.decode("encode.enc", "decode.txt", "frequency.txt");
     }
 
 }
