@@ -2,36 +2,39 @@
 
 path="/Users/weilezheng/desktop/Huffman_Coding/src"
 class="/Users/weilezheng/desktop/Huffman_Coding/src/HuffmanMain"
-default_encode_name="encode.enc"
-default_decode_name="decode.txt"
 
 compress(){
     echo "comp"
-    java -cp $path HuffmanMain encode $1 $default_encode_name
-    #java -cp [path] [main.java] [Encode/Decode] [File to be Compressed] [Compression Name ]
+    java -cp $path HuffmanMain encode $1 $2
+    #java -cp [path] <main class> [Encode/Decode] <File to be Compressed> <Compression Name>
 
 }
 
 decompress(){
     echo "decomp"
-    java -cp $path HuffmanMain decode $1 $default_decode_name
+    java -cp $path HuffmanMain decode $1 $2
 }
 
-
+outputname=""
 if [ "$3" == "-o" ]; then
-default_encode_name="$4"
-default_decode_name="$4"
+outputname="$4"
 fi 
 
 file="$2"
 
 if [ "$1" == "-compress" ]; then 
-compress $file
+compress $file $outputname
 
 elif [ "$1" == "-decompress" ]; then 
-decompress $file
-rm .frequency.txt 
+decompress $file $outputname
+#rm .frequency.txt 
+
+elif [ "$1" == "" ];then
+    echo "Usage: huffman -[compress/decompress] <InputFile> (Optional) -o [OutputFileName]"
+
+else
+    echo "Error: option not recognized"
+    echo "Caused by \"$1\" option not found"
 
 fi
-
 
