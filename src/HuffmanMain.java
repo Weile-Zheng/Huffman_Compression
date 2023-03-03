@@ -4,8 +4,8 @@ import java.util.*;
 
 public class HuffmanMain implements Huffman {
     private Queue<HuffmanNode> queue;
-    private Map<Integer, String> huffCodeMap;
-    private Map<Integer, Integer> frequency;
+    private Map<Integer, String> huffCodeMap; //Stores unicode char as key and huffman encoding as string value.
+    private Map<Integer, Integer> frequency; //Stores Unicode char as key and frequency as value.
 
     HuffmanMain() {
         queue = new PriorityQueue<>();
@@ -13,10 +13,11 @@ public class HuffmanMain implements Huffman {
         frequency = new HashMap<>();
     }
 
+    //Scan frequency of character in a file. Store as key value pair in hashmap.
     private void scanFrequency(String inputFile) {
         File file = new File(inputFile);
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
             int s = reader.read();
             while (s != -1) {
                 if (frequency.containsKey(s))
@@ -32,13 +33,14 @@ public class HuffmanMain implements Huffman {
 
     }
 
+    //Given an inputfile name and outputfile name(freqfile), write frequency to output
     private void writeToFrequency(String freqFileName) {
         String outpath = outputPath();
         try {
             System.out.println("Generating Frequency File");
-            FileWriter writer = new FileWriter(outpath + "/"+freqFileName); //Hidden freqFile
+            FileWriter writer = new FileWriter(outpath + "/" + freqFileName);
             for (Integer key : frequency.keySet()) {
-                writer.write(Integer.toBinaryString(key) + ":" + frequency.get(key) + "\n");
+                writer.write(String.format("%8s", Integer.toBinaryString(key)).replace(' ', '0')+":" +frequency.get(key)+ "\n");
             }
             writer.close();
         } catch (IOException e) {
@@ -47,6 +49,7 @@ public class HuffmanMain implements Huffman {
 
     }
 
+    //Read the frequency file and put characters and frequencies into frequency map
     private void parseFrequencyFile(String frequencyFile) {
         File file = new File(frequencyFile);
         try {
@@ -54,7 +57,7 @@ public class HuffmanMain implements Huffman {
             String line = reader.readLine();
             while (line != null) {
                 String[] arr = line.split(":");
-                int decimal = Integer.parseInt(arr[0], 2);
+                int decimal = Integer.parseInt(arr[0], 2); //convert binary to unicode decimal.
                 frequency.put(decimal, Integer.parseInt(arr[1]));
                 line = reader.readLine();
             }
@@ -64,14 +67,16 @@ public class HuffmanMain implements Huffman {
 
     }
 
+    //Enqueue element from a map into the instance variable queue of this huffmansubmit class
     private void enQueue() {
         for (Integer key : frequency.keySet()) {
             queue.offer(new HuffmanNode(key, frequency.get(key)));
         }
     }
 
+    //Nested HuffmanNode Class
     private class HuffmanNode implements Comparable<HuffmanNode> {
-        int c;
+        int c; //unicode representation of the character
         int freq;
         HuffmanNode left;
         HuffmanNode right;
@@ -87,11 +92,14 @@ public class HuffmanMain implements Huffman {
         }
     }
 
+    //Build huffman tree with the priority queue instance variable.
+    //Return a HuffmanNode to the root of the tree.
     private HuffmanNode huffmanTree() {
         HuffmanNode root = null;
         while (queue.size() != 1) {
             HuffmanNode minNode = queue.poll();
             HuffmanNode secondMinNode = queue.poll();
+            //Dummy node only hold total frequency from the two child nodes
             HuffmanNode totalFrequency = new HuffmanNode(-1, minNode.freq + secondMinNode.freq);
             totalFrequency.left = minNode;
             totalFrequency.right = secondMinNode;
@@ -118,17 +126,17 @@ public class HuffmanMain implements Huffman {
         BinaryOut encodeStream = new BinaryOut(outpath + "/" + outputFile);
         System.out.println("Output now writing");
         scanFrequency(inputFile);
-        enQueue();
+        enQueue(); //enqueue element of frequency hashmap to pqueue
         writeToFrequency(freqFile);
-        HuffmanNode root = huffmanTree();
+        HuffmanNode root = huffmanTree(); //build huffmantree with queue. Return root.
         huffmanCodeToMap(root, "");
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedInputStream reader = new BufferedInputStream(new FileInputStream(inputFile));
             int s = reader.read();
             while (s != -1) {
-                String[] arr = huffCodeMap.get(s).split("");
-                for (String i : arr) {
+                String [] arr = huffCodeMap.get(s).split("");
+                for(String i:arr){
                     encodeStream.write(i.equals("1"));
                 }
                 s = reader.read();
@@ -137,7 +145,7 @@ public class HuffmanMain implements Huffman {
             e.printStackTrace();
         }
         encodeStream.flush();
-        queue.clear();
+        queue.clear(); //Since we never poll() all element from queue, we must clear it after use
     }
 
 
@@ -149,7 +157,7 @@ public class HuffmanMain implements Huffman {
         BinaryIn stream = new BinaryIn(inputFile);
 
         try {
-            FileWriter writer = new FileWriter(outputpath + "/" + outputFile);
+            BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(outputpath + "/" + outputFile));
             HuffmanNode current = root;
             while (!stream.isEmpty()) {
                 boolean b = stream.readBoolean();
@@ -163,6 +171,7 @@ public class HuffmanMain implements Huffman {
                     current = root;
                 }
             }
+            writer.flush();
             writer.close();
 
         } catch (IOException e) {

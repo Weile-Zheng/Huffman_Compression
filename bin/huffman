@@ -4,7 +4,7 @@ path="/Users/weilezheng/desktop/Huffman_Coding/src"
 class="/Users/weilezheng/desktop/Huffman_Coding/src/HuffmanMain"
 
 compress(){
-    echo "comp"
+    echo comp
     java -cp $path HuffmanMain encode $1 $2
     #java -cp [path] <main class> [Encode/Decode] <File to be Compressed> <Compression Name>
 
