@@ -7,6 +7,6 @@ out.enc
 out/
 output.enc
 src/read.java
-srr/HuffmanSubmit.java
+src/HuffmanSubmit.java
 test.txt
 myidea.txt

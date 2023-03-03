@@ -159,11 +159,10 @@ public class HuffmanMain implements Huffman {
                     current = current.right;
                 }
                 if (current.left == null && current.right == null) {
-                    writer.write((char) current.c);
+                    writer.write(current.c);
                     current = root;
                 }
             }
-            writer.write("\n");
             writer.close();
 
         } catch (IOException e) {
@@ -229,7 +228,7 @@ public class HuffmanMain implements Huffman {
                 huffman.decode(url.getFile(), args[2], frequrl.getFile());
             }
             else{
-                huffman.decode(url.getFile(),parsedFile,frequrl.getFile());
+                // huffman.decode(url.getFile(),parsedFile,frequrl.getFile());
             }
         }
 
