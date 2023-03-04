@@ -1,33 +1,41 @@
 #!/bin/bash
 
-path="/Users/weilezheng/desktop/Huffman_Coding/src"
-class="/Users/weilezheng/desktop/Huffman_Coding/src/HuffmanMain"
+path="~/Huffman_Compression/bin"
+#Path for all "~/Huffman_Coding/src"
+currentDir=$(pwd)
 
 compress(){
-    echo comp
-    java -cp $path HuffmanMain encode $1 $2
-    #java -cp [path] <main class> [Encode/Decode] <File to be Compressed> <Compression Name>
-
+    java -cp $path HuffmanMain encode $1 $2 $currentDir
+    #java -cp [path] <main class> [Encode/Decode] <File to be Compressed> <Compression Name> currentDirectory
 }
 
 decompress(){
-    echo "decomp"
-    java -cp $path HuffmanMain decode $1 $2
+    java -cp $path HuffmanMain decode $1 $2 $currentDir
 }
 
+#Specify Output Name
 outputname=""
 if [ "$3" == "-o" ]; then
 outputname="$4"
-fi 
+fi
+
+
+
+if [ "$2" == "" ];then
+echo "Error: No file to be compressed/No file inputted"
+exit 1
+fi
+
 
 file="$2"
 
-if [ "$1" == "-compress" ]; then 
+if [ "$1" == "-compress" ]; then
 compress $file $outputname
+rm $file
 
-elif [ "$1" == "-decompress" ]; then 
+elif [ "$1" == "-decompress" ]; then
 decompress $file $outputname
-#rm .frequency.txt 
+rm $file ".${file}_freq.txt"
 
 elif [ "$1" == "" ];then
     echo "Usage: huffman -[compress/decompress] <InputFile> (Optional) -o [OutputFileName]"
@@ -37,4 +45,3 @@ else
     echo "Caused by \"$1\" option not found"
 
 fi
-
