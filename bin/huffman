@@ -1,16 +1,14 @@
 #!/bin/bash
 
-path="~/Huffman_Compression/bin"
-#Path for all "~/Huffman_Coding/src"
 currentDir=$(pwd)
 
 compress(){
-    java -cp $path HuffmanMain encode $1 $2 $currentDir
+    java -cp ~/Huffman_Compression/bin HuffmanMain encode $1 $2 $currentDir
     #java -cp [path] <main class> [Encode/Decode] <File to be Compressed> <Compression Name> currentDirectory
 }
 
 decompress(){
-    java -cp $path HuffmanMain decode $1 $2 $currentDir
+    java -cp ~/Huffman_Compression/bin HuffmanMain decode $1 $2 $currentDir
 }
 
 #Specify Output Name
