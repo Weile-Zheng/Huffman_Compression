@@ -5,6 +5,8 @@ Huffman Compression Command for zsh
 
 Get Started:
 
+Open the terminal and execute the following commands
+
 ```Bash
 cd ~
 git clone https://github.com/Weile-Zheng/Huffman_Compression.git
