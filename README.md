@@ -20,4 +20,3 @@ huffman -[compress/decompress] <InputFile> (Optional) -o [OutputFileName]
 huffman -compress text.txt
 ```
 
-*Note that after compression the original file will be deleted. To keep a copy of the original file, use huffman -k
