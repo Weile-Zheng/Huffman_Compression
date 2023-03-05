@@ -15,6 +15,11 @@ chmod ugo+x ~/Huffman_Compression/bin/huffman
 
 ```
 
+Test Installation
+```Bash
+huffman --version
+```
+
 Usage
 ```
 huffman -[compress/decompress] <InputFile> (Optional) -o [OutputFileName]
