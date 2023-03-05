@@ -11,18 +11,22 @@ decompress(){
     java -cp ~/Huffman_Compression/bin HuffmanMain decode $1 $2 $currentDir
 }
 
+if [ "$1" == "--version" ];then
+echo "Version 1.0"
+exit 0
+fi
+
+if [ "$2" == "" ];then
+echo "Error: No file to be compressed/No file inputted"
+exit 1
+fi
+
 #Specify Output Name
 outputname=""
 if [ "$3" == "-o" ]; then
 outputname="$4"
 fi
 
-
-
-if [ "$2" == "" ];then
-echo "Error: No file to be compressed/No file inputted"
-exit 1
-fi
 
 
 file="$2"
