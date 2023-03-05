@@ -33,7 +33,8 @@ rm $file
 
 elif [ "$1" == "-decompress" ]; then
 decompress $file $outputname
-rm $file ".${file}_freq.txt"
+parsedFile=${file%.*}
+rm $file ".${parsedFile}_freq.txt"
 
 elif [ "$1" == "" ];then
     echo "Usage: huffman -[compress/decompress] <InputFile> (Optional) -o [OutputFileName]"
