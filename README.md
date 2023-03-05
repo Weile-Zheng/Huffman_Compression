@@ -8,7 +8,7 @@ Get Started:
 ```Bash
 cd ~
 git clone https://github.com/Weile-Zheng/Huffman_Compression.git
-echo "export PATH=$PATH:$(pwd)/Huffman_Compression/bin" >> .zprofile
+echo 'export PATH=$PATH:$(pwd)/Huffman_Compression/bin' >> .zprofile
 chmod ugo+x ~/Huffman_Compression/bin/huffman 
 
 ```
