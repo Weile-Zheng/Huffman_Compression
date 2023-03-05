@@ -147,7 +147,7 @@ public class HuffmanMain implements Huffman {
         parseFrequencyFile(freqFile);
         enQueue();
         HuffmanNode root = huffmanTree();
-        BinaryIn stream = new BinaryIn("alice30.txt");
+        BinaryIn stream = new BinaryIn(inputFile);
 
         try {
             BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(outputFile));
