@@ -160,7 +160,6 @@ public class HuffmanMain implements Huffman {
                     current = current.right;
                 }
                 if (current.left == null && current.right == null) {
-                    System.out.println(current.c);
                     writer.write(current.c);
                     current = root;
                 }
