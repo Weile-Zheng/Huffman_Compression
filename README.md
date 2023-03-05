@@ -17,6 +17,6 @@ Usage
 ```
 huffman -[compress/decompress] <InputFile> (Optional) -o [OutputFileName]
 #Ex:
-huffman -compress text.tx
+huffman -compress text.txt
 ```
 
