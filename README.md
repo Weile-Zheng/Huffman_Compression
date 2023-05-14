@@ -1,7 +1,7 @@
 # Huffman Compression
 ***
 
-Huffman Compression Command for zsh
+Simple and naive implementation of Huffman Compression. 
 
 Get Started:
 
