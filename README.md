@@ -1,11 +1,11 @@
 # Huffman Compression
 ***
 
-Simple and naive implementation of Huffman Compression. 
+Simple and naive implementation of Huffman Compression that can be executed from the command line .
 
 Get Started:
 
-Open the terminal and execute the following commands
+In the terminal execute the following commands
 
 ```Bash
 cd ~
